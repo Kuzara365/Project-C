@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define NUM_PRODUCTS 18
+
+struct Product {
+    int id;
+    char name[30];
+    int remain;
+    int price;
+};
+
+void printProduct(struct Product p) {
+    printf("----\n");
+    printf("Name goods: %s\n", p.name);
+    printf("+)Id: %d\n", p.id);
+    printf("+)Price: %d\n", p.price);
+    printf("+)Remain: %d\n", p.remain);
+}
+
+int main() {
+    struct Product products[NUM_PRODUCTS] = {
+        {001, "oreon", 100, 15000},
+        {002, "nabati", 100, 30000},
+        {003, "coca", 100, 10000},
+        {004, "pepsi", 100, 10000},
+        {005, "chocoPie", 100, 30000},
+        {006, "custas", 100, 32000},
+        {007, "Alpenliepe", 100, 12000},
+        {011, "7up", 100, 7000},
+        {012, "mirinda", 100, 8000},
+        {013, "Nestle", 100, 50000},
+        {014, "Milka", 100, 13000},
+        {015, "Kitkat", 100, 20000},
+        {016, "Danisa", 100, 50000},
+        {017, "Lu", 100, 35000},
+        {020, "solie", 100, 25000},
+        {021, "Roca", 100, 30000},
+        {022, "starburst", 100, 24000},
+        {023, "Nerds", 100, 12000}
+    };
+
+    printf("List of products:\n");
+    for (int i = 0; i < NUM_PRODUCTS; i++) {
+        printProduct(products[i]);
+    }
+
+    return 0;
+}
