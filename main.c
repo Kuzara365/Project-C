@@ -44,7 +44,7 @@ struct order
 };
 
 // Hàm xin chào
-void sayHello() {
+void hello() {
     printf("--------------------------------------\n");
     printf("\tXin chao, chao mung den voi Shoppu.\n");
 }
@@ -78,12 +78,16 @@ void readProduct(struct product **products, int *productCount) {
         while (fgets(line, 1000, file) != NULL) {
             (*productCount)++;
             *products = (struct product *)realloc(*products, *productCount * sizeof(struct product));
+
             sp = strtok(line, ",");
             (*products)[*productCount - 1].id = atoi(sp);
+
             sp = strtok(NULL, ",");
             strcpy((*products)[*productCount - 1].product_name, sp);
+
             sp = strtok(NULL, ",");
             (*products)[*productCount - 1].remain = atoi(sp);
+            
             sp = strtok(NULL, ",");
             (*products)[*productCount - 1].price = atof(sp);
         }
@@ -244,6 +248,7 @@ void deleteOrder(struct order **orders, int *orderCount, int id) {
     int choice;
     do {
         readProduct(&products, &productCount);
+        hello();
         menu();
         scanf("%d", &choice);
 
