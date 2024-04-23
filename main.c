@@ -73,16 +73,23 @@ void menu() {
 void readProduct(struct product **products, int *productCount) {
     char line[1000];
     char *data;
-    FILE * productData = fopen("E:/Project C/product.csv", "r");
+    FILE * productData = fopen("${fileDirname}//product.csv", "r");
     if (productData == NULL) {
         printf("Khong the mo file.\n");
         return;
     }
     else {
-        while (!feof(productData)) {
-            fgets(line, sizeof(line), productData);
+        while (fgets(line, 1000, productData) != NULL) {
+            (*productCount)++;
+            *products = (struct product *)realloc(*products, *productCount * sizeof(struct product));
             data = strtok(line, ",");
-            
+            (*products)[*productCount - 1].id = atoi(data);
+            data = strtok(NULL, ",");
+            strcpy((*products)[*productCount - 1].product_name, data);
+            data = strtok(NULL, ",");
+            (*products)[*productCount - 1].remain = atoi(data);
+            data = strtok(NULL, ",");
+            (*products)[*productCount - 1].price = atof(data);
         }
         fclose(productData);
     }
