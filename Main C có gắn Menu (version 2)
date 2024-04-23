@@ -44,6 +44,46 @@ struct order
 	int cart_id;
 };
 
+#define MAX_NAME_LENGTH 100
+#define MAX_ADDRESS_LENGTH 200
+#define MAX_PHONE_LENGTH 20
+#define MAX_ITEMS 10
+
+//import data from product.csv
+void readProduct(struct product *Arrproduct, int *number)
+{
+	FILE *file;
+	file = fopen("E:/Project C/product.csv", "r");
+	if (file == NULL)
+	{
+		printf("Can't open file\n");
+	}
+	else
+	{
+		while (!feof(file))
+		{
+			fscanf(file, "%d,%c,%d,%f\n", &Arrproduct[*number].id);
+			fscanf(file, "%c",Arrproduct[*number].product_name);
+			fscanf(file, "%d", &Arrproduct[*number].remain);
+			fscanf(file, "%f", &Arrproduct[*number].price);
+			(*number)++;
+		}
+	}
+	fclose(file);
+}
+
+//show product
+void showProduct(struct product *Arrproduct, int number)
+{
+	for (int i = 0; i < number; i++)
+	{
+		printf("ID: %d\n", Arrproduct[i].id);
+		printf("Product name: %s\n", Arrproduct[i].product_name);
+		printf("Remain: %d\n", Arrproduct[i].remain);
+		printf("Price: %f\n", Arrproduct[i].price);
+	}
+}
+
 void MainMenu()
 {
 	printf("=============ONLINE SALES SYSTEM==============");
@@ -57,9 +97,6 @@ void MainMenu()
 void MenuSales()
 {
 	printf("***************List of goods****************");
-	
-	               // vi tri mat hang 
-	               
 	printf("--------------------------------------------");
 	printf("");
 	printf("0.Exit.");
@@ -94,12 +131,9 @@ void enterUserInfo(struct user *user) {
 //-----------------------------------------------------------------------
 int main()
 {
-	FILE *file;
-	file = fopen("product.csv", "r");
-	
-	int option=0;
-	struct product Arrproduct[1000]; 
-	int number = 0;
+	int option = 0, number = 0;
+	struct product Arrproduct[1000];
+	readProduct(Arrproduct, &number);
 	do{
 		MainMenu();
 		printf("Choose your option: ");
@@ -109,36 +143,35 @@ int main()
 				printf("You have exited the sales page!\n");
 				break;
 			}
-			case 1:{//MenuSales 
-			    void MenuSales();
-			    
-			    // lua chon mat hang mong muon 
-			    printf("Select goods:");
-			    
-			    
-			    //Lua chon cach thoat trang mua hang sau khi mua xong 
-			    int opt=0;
-			    do{
-			    	printf("0.Exit.\n");
-			        printf("1.Move to cart.\n");
-			        printf("Choose your option:");
-			        switch (opt){
-			        	case 0:{ //thoat ra trang chu 
-			        		printf("EXITED!");
-							break;
-						}
-						case 1:{// di chuyen thang sang gio hang
-							printf("MOVETED TO CART!");
-							break;
-						}
-						default:{
-							printf("Invalid option! Please choose again!");
-							break;
-						}
+			case 1:{
+			showProduct(Arrproduct, number);
+			MenuSales();
+			// lua chon mat hang mong muon 
+			printf("Select goods:");
+			//Lua chon cach thoat trang mua hang sau khi mua xong 
+			int opt=0;
+			do{
+				printf("0.Exit.\n");
+				printf("1.Move to cart.\n");
+				printf("Choose your option:");
+				scanf("%d", &opt); // Fix: Read the option as an integer
+				switch (opt){
+					case 0:{ //thoat ra trang chu 
+						printf("EXITED!");
+						break;
 					}
-				}while(opt != 0);
-				break;
-			}
+					case 1:{// di chuyen thang sang gio hang
+						printf("MOVETED TO CART!");
+						break;
+					}
+					default:{
+						printf("Invalid option! Please choose again!");
+						break;
+					}
+				}
+			}while(opt != 0);
+			break;
+		}
 			case 2:{//kiem tra gio hang 
 			    int opt = 0;
 			    do{
@@ -154,8 +187,9 @@ int main()
 						
 						break;
 					}
-					case 2:{//Lua chon phuong thuc thanh toan
-					    enterUserInfo();
+					case 2:{
+					struct user user;
+					enterUserInfo(&user);
 						int opt;
 						printf("Payment methods.");
 						printf("0.Exit.");
