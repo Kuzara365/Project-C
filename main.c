@@ -7,7 +7,7 @@ struct product
 	int id;
 	char product_name[30];
 	int remain;
-	float price;
+	int price;
 };
 
 struct cart
@@ -15,8 +15,8 @@ struct cart
 	int id;
 	char product_id[30];
 	char pruct_name[30];
-	float price;
-	float sum;
+	int price;
+	int sum;
 	char coupon[30];
 	float final_sum;
 	int user_id;
@@ -35,13 +35,18 @@ struct order
 	int id;
 	char product_id[30];
 	char product_name[30];
-	float price;
-	float final_sum;
+	int price;
+	int final_sum;
 	char payment[100];
 	char status[30];
 	int user_id;
 	int cart_id;
 };
+
+#define MAX_NAME_LENGTH 100
+#define MAX_ADDRESS_LENGTH 200
+#define MAX_PHONE_LENGTH 20
+#define MAX_ITEMS 20
 
 // Hàm xin chào
 void hello() {
@@ -67,31 +72,19 @@ void menu() {
 //Nhập dữ liệu sản phẩm từ file
 void readProduct(struct product **products, int *productCount) {
     char line[1000];
-    char *sp;
-    FILE *file;
-    file = fopen("product.csv", "r");
-    if (file == NULL) {
+    char *data;
+    FILE * productData = fopen("E:/Project C/product.csv", "r");
+    if (productData == NULL) {
         printf("Khong the mo file.\n");
         return;
     }
     else {
-        while (fgets(line, 1000, file) != NULL) {
-            (*productCount)++;
-            *products = (struct product *)realloc(*products, *productCount * sizeof(struct product));
-
-            sp = strtok(line, ",");
-            (*products)[*productCount - 1].id = atoi(sp);
-
-            sp = strtok(NULL, ",");
-            strcpy((*products)[*productCount - 1].product_name, sp);
-
-            sp = strtok(NULL, ",");
-            (*products)[*productCount - 1].remain = atoi(sp);
+        while (!feof(productData)) {
+            fgets(line, sizeof(line), productData);
+            data = strtok(line, ",");
             
-            sp = strtok(NULL, ",");
-            (*products)[*productCount - 1].price = atof(sp);
         }
-        fclose(file);
+        fclose(productData);
     }
 }
 
@@ -102,7 +95,7 @@ void displayProduct(struct product *products, int productCount) {
         printf("ID: %d\n", products[i].id);
         printf("Ten san pham: %s\n", products[i].product_name);
         printf("So luong con lai: %d\n", products[i].remain);
-        printf("Gia: %.2f\n", products[i].price);
+        printf("Gia: %d\n", products[i].price);
         printf("--------------------------------------\n");
     }
 }
@@ -324,10 +317,14 @@ void deleteOrder(struct order **orders, int *orderCount, int id) {
                 deleteOrder(&orders, &orderCount, id);
                 break;
             }
+
+            case 8:{
+                readProduct(&products, &productCount);
+                displayProduct(products, productCount);
+            }
             case 0:
                 printf("Thoat chuong trinh. \n");
-                break;
-
+                exit(1);
             default:
                 printf("Khong ton tai.\n");
                 break;
