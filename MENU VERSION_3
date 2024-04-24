@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int main(void);
+struct product
+{
+	int id;
+	char product_name[30];
+	int remain;
+	int price;
+};
+
+struct cart
+{
+	int id;
+	char product_id[30];
+	char pruct_name[30];
+	int price;
+	int sum;
+	int final_sum;
+	int user_id;
+};
+
+struct user
+{
+	int id;
+	char name[30];
+	char address[30];
+	int phone_number;
+};
+
+struct order
+{
+	int id;
+	char product_id[30];
+	char product_name[30];
+	int price;
+	int final_sum;
+	char payment[100];
+	char status[30];
+	int user_id;
+	int cart_id;
+};
+
+#define MAX_NAME_LENGTH 100
+#define MAX_ADDRESS_LENGTH 200
+#define MAX_PHONE_LENGTH 20
+#define MAX_ITEMS 10
+
+//import data from product.csv
+void readProduct(struct product *Arrproduct, int *number)
+{
+	FILE *file;
+	file = fopen("E:/Project C/product.csv", "r");
+	if (file == NULL)
+	{
+		printf("Can't open file\n");
+	}
+	else
+	{
+		while (!feof(file))
+		{
+			fscanf(file, "%d,%c,%d,%f\n", &Arrproduct[*number].id);
+			fscanf(file, "%c",Arrproduct[*number].product_name);
+			fscanf(file, "%d", &Arrproduct[*number].remain);
+			fscanf(file, "%f", &Arrproduct[*number].price);
+			(*number)++;
+		}
+	}
+	fclose(file);
+}
+
+//show product
+void showProduct(struct product *Arrproduct, int number)
+{
+	for (int i = 0; i < number; i++)
+	{
+		printf("ID: %d\n", Arrproduct[i].id);
+		printf("Product name: %s\n", Arrproduct[i].product_name);
+		printf("Remain: %d\n", Arrproduct[i].remain);
+		printf("Price: %f\n", Arrproduct[i].price);
+	}
+}
+
+void MainMenu()
+{
+	printf("|=============ONLINE SALES SYSTEM==============|");
+	printf("|==  0.Exit.                                 ==|");
+    printf("|==  1.Check goods.                          ==|");
+	printf("|==  2.Cart: check your bills.               ==|");
+	printf("|==  3.Check purchased orders.               ==|");
+	printf("|==============================================|");
+} 
+
+void MenuSales()
+{
+	printf("****************SALES PAGE******************\n");
+	printf("0.Exit.\n");
+	printf("1.Select goods.\n") 
+	printf("********************************************\n");
+}
+
+void CheckCart()
+{
+	printf("*****************CART*****************\n");
+	printf("0.Move to menu.\n");
+	printf("1.Select bills.\n");
+	printf("**************************************\n");
+}
+
+void enterUserInfo(struct user *user) {
+    printf("Enter your Id: ");
+    scanf("%d", &user->id);
+	
+    printf("Your name: ");
+    scanf("%s", user->name);
+	
+    printf("Your address: ");
+    scanf("%s", user->address);
+	
+    printf("Phone number: ");
+    scanf("%s", user->phone_number);
+}
+
+//-----------------------------------------------------------------------
+int main()
+{
+	do{
+		MainMenu();
+		printf("Choose your option: ");
+		scanf("%d", &option);
+		switch (option){
+			case 0:{
+				printf("You have exited the application!\n");
+				break;
+			}
+			case 1:{
+				printf("List goods:")
+			    // func: in san pham 
+			    MenuSales();
+			    // lua chon mat hang mong muon 
+			    int n=0;
+			    switch(n){
+			    	case 0:{
+			    		// chuyen ve giao dien chinh 
+			    		printf("Move to Menu");
+						break;
+					}
+					case 1:{
+						// func: lua chon mat hang
+						}
+						break;
+					}while (n != 0);
+				}
+			case 2 :{// Cart : check bills 
+				switch (opt){
+					case 1:{// thoat ve menu
+						
+						break;
+					}
+					case 2:{// lua chon gio hang 
+						
+						break;
+					}
+				}while (option != 0);
+				break;
+			}
+			case 3:{ //check don mua 
+                
+				// func: check don mua 
+				
+				break;
+			}
+			
+	}while (option != 0);
+}
