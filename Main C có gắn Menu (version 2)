@@ -2,13 +2,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-int main(void);
 struct product
 {
 	int id;
 	char product_name[30];
 	int remain;
-	float price;
+	int price;
 };
 
 struct cart
@@ -16,8 +15,8 @@ struct cart
 	int id;
 	char product_id[30];
 	char pruct_name[30];
-	float price;
-	float sum;
+	int price;
+	int sum;
 	char coupon[30];
 	float final_sum;
 	int user_id;
@@ -36,8 +35,8 @@ struct order
 	int id;
 	char product_id[30];
 	char product_name[30];
-	float price;
-	float final_sum;
+	int price;
+	int final_sum;
 	char payment[100];
 	char status[30];
 	int user_id;
@@ -50,38 +49,41 @@ struct order
 #define MAX_ITEMS 10
 
 //import data from product.csv
-void readProduct(struct product *Arrproduct, int *number)
-{
-	FILE *file;
-	file = fopen("E:/Project C/product.csv", "r");
-	if (file == NULL)
-	{
-		printf("Can't open file\n");
-	}
-	else
-	{
-		while (!feof(file))
-		{
-			fscanf(file, "%d,%c,%d,%f\n", &Arrproduct[*number].id);
-			fscanf(file, "%c",Arrproduct[*number].product_name);
-			fscanf(file, "%d", &Arrproduct[*number].remain);
-			fscanf(file, "%f", &Arrproduct[*number].price);
-			(*number)++;
-		}
-	}
-	fclose(file);
+void readProduct(struct product **products, int *productCount) {
+    char line[1000];
+    char *data;
+    FILE * productData = fopen("E:/Project C/product.csv", "r");
+    if (productData == NULL) {
+        printf("Khong the mo file.\n");
+        return;
+    }
+    else {
+        while (fgets(line, 1000, productData) != NULL) {
+            (*productCount)++;
+            *products = (struct product *)realloc(*products, *productCount * sizeof(struct product));
+            data = strtok(line, ",");
+            (*products)[*productCount - 1].id = atoi(data);
+            data = strtok(NULL, ",");
+            strcpy((*products)[*productCount - 1].product_name, data);
+            data = strtok(NULL, ",");
+            (*products)[*productCount - 1].remain = atoi(data);
+            data = strtok(NULL, ",");
+            (*products)[*productCount - 1].price = atof(data);
+        }
+        fclose(productData);
+    }
 }
 
-//show product
-void showProduct(struct product *Arrproduct, int number)
-{
-	for (int i = 0; i < number; i++)
-	{
-		printf("ID: %d\n", Arrproduct[i].id);
-		printf("Product name: %s\n", Arrproduct[i].product_name);
-		printf("Remain: %d\n", Arrproduct[i].remain);
-		printf("Price: %f\n", Arrproduct[i].price);
-	}
+//Hàm hiển thị sản phẩm
+void displayProduct(struct product *products, int productCount) {
+    printf("Danh sach san pham: \n");
+    for (int i = 0; i < productCount; i++) {
+        printf("ID: %d\n", products[i].id);
+        printf("Ten san pham: %s\n", products[i].product_name);
+        printf("So luong con lai: %d\n", products[i].remain);
+        printf("Gia: %d\n", products[i].price);
+        printf("--------------------------------------\n");
+    }
 }
 
 void MainMenu()
