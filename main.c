@@ -73,7 +73,7 @@ void menu() {
 void readProduct(struct product **products, int *productCount) {
     char line[1000];
     char *data;
-    FILE * productData = fopen("${fileDirname}//product.csv", "r");
+    FILE * productData = fopen("E:/Project C/product.csv", "r");
     if (productData == NULL) {
         printf("Khong the mo file.\n");
         return;
@@ -108,22 +108,22 @@ void displayProduct(struct product *products, int productCount) {
 }
 
 // Hàm thêm sản phẩm mới
-void addProduct(struct product **products, int *productCount, int id, char *name, int remain, float price) {
+void addProduct(struct product **products, int *productCount, int id, char *name, int remain, int price) {
     FILE *file;
-    file = fopen("product.csv", "a");
+    file = fopen("E:/Project C/product.csv", "a");
     if (file == NULL) {
         printf("Khong the mo file.\n");
         return;
     }
     else {
-        fprintf(file, "%d,%s,%d,%.2f\n", id, name, remain, price);
+        fprintf(file, "%d, %s, %d, %d\n", id, name, remain, price);
         fclose(file);
         printf("Them thanh cong.\n");
     }
 }
 
 // Hàm cập nhật thông tin sản phẩm
-void updateProduct(struct product *products, int productCount, int id, int new_remain, float new_price) {
+void updateProduct(struct product *products, int productCount, int id, int new_remain, int new_price) {
     for (int i = 0; i < productCount; i++) {
         if (products[i].id == id) {
             products[i].remain = new_remain;
@@ -171,7 +171,7 @@ void dissplayCart(struct cart *carts, int cartCount) {
 }
 
 // Hàm cập nhật giỏ hàng
-void updateCart(struct cart *carts, int cartCount, int id, float new_final_sum) {
+void updateCart(struct cart *carts, int cartCount, int id, int new_final_sum) {
     for (int i = 0; i < cartCount; i++) {
         if (carts[i].id == id) {
             carts[i].final_sum = new_final_sum;

@@ -1,2 +1,4 @@
 .vscode/
 *.exe
+test.c
+test2.c
