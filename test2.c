@@ -18,7 +18,6 @@ struct cart
 	char pruct_name[30];
 	int price;
 	int sum;
-	char coupon[30];
 	int final_sum;
 	int user_id;
 };
@@ -28,7 +27,7 @@ struct user
 	int id;
 	char name[30];
 	char address[30];
-	int phone_number;
+	int phone_number[20];
 };
 
 struct order
@@ -82,7 +81,7 @@ void readProduct(struct product **products, int *productCount) {
 //Hiển thị sản phẩm
 void displayProduct(struct product *products, int productCount) {
     printf("List of product \n");
-    for (int i = 0; i < productCount; i++) {
+    for (int i = 1; i < productCount; i++) {
         printf("ID: %d\n", products[i].id);
         printf("%s\n", products[i].product_name);
         printf("Remain %d\n", products[i].remain);
