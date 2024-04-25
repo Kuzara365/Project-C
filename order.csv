@@ -1,1 +1,2 @@
-ID, Product, Quantity, Price, Sum
+ID, Product, Quantity, Price, Sum, Payment, Status, User_ID
+1, Candy, 2, 20, 40, Cash, Paid, 23
