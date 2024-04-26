@@ -1,6 +1,39 @@
+#ifndef F_BUY_H
+#define F_BUY_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void f_buy();
+void readProduct(struct product **products, int *productCount);
+void displayProduct(struct product *products, int productCount);
 
 
+#endif
 
-void readProduct(struct product *Arrproduct, int *number);
-void showProduct(struct product *Arrproduct, int number);
-void addCart(struct cart **carts, int *cartCount, char *product_id, char *product_name, float price, float sum, char *coupon, float final_sum, int user_id);
+/*
+typedef struct {
+    char diemden[50];
+    char diemdi[50];
+    char thoigiankhoihanh[20];
+    char thoigianhacanh[20];
+    char hanghangkhong[30];
+    int thoigianbay;
+    char trangthai[30];
+} Flight;
+
+int calculateTravelTime(char departurePoint[], char destination[]);
+
+void addFlight(Flight flights[], int *currentFlightID);
+
+void changeFlight(Flight flights[]);
+
+void deleteFlight(Flight flights[], int *currentFlightID);
+
+void showflights(Flight flights[], int index);
+
+void MenuFlights(Flight flights[], int *currentFlightID);
+
+#endif
+*/
