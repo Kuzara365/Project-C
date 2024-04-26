@@ -2,9 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "3.f_buy.h" //mua hang 
-#include "3.f_cart.h" //gio hang (danh sach bill)
-#include "3.f_check.h" // kiem tra don da mua 
+#include "f_buy.h" //mua hang 
+#include "f_cart.h" //gio hang (danh sach bill)
+#include "f_check.h" // kiem tra don da mua 
 
 void MainMenu()
 {
