@@ -206,7 +206,7 @@ void removeFromCart(struct cart *carts, int cartCount, int id, float new_final_s
                 carts[j] = carts[j + 1];
             }
             cartCount--;
-            printf("\tProduct removed from cart!\n");
+            printf("Product removed from cart!\n");
             found = 1;
             break;
         }
@@ -214,33 +214,9 @@ void removeFromCart(struct cart *carts, int cartCount, int id, float new_final_s
 
     if (!found)
     {
-        printf("\tProduct not found in cart!\n");
+        printf("Product not found in cart!\n");
     }
     return;
-}
-
-// Function to delete cart
-void deleteCart(struct cart **carts, int *cartCount, int id)
-{
-    int found = 0;
-    for (int i = 0; i < *cartCount; i++)
-    {
-        if ((*carts)[i].id == id)
-        {
-            for (int j = i; j < *cartCount - 1; j++)
-            {
-                (*carts)[j] = (*carts)[j + 1];
-            }
-            (*cartCount)--;
-            found = 1;
-            printf("Deleted cart successfully.\n");
-            break;
-        }
-    }
-    if (!found)
-    {
-        printf("Cart with corresponding ID not found.\n");
-    }
 }
 
 // Function to add new order
@@ -396,7 +372,7 @@ void displayUser(struct user *users, struct order *order, int userCount)
 
 void ExportOrder(struct order *orders, int orderCount)
 {
-    FILE *orderData = fopen("Datalo/order.csv", "a");
+    FILE *orderData = fopen("Datalo/orders.csv", "a");
     if (orderData == NULL)
     {
         printf("Error opening file\n");
@@ -424,7 +400,7 @@ void readOrder(struct order **orders, int *orderCount)
 {
     char line[100];
     char *data;
-    FILE *orderData = fopen("Data/orders.csv", "r");
+    FILE *orderData = fopen("Datalo/orders.csv", "r");
     if (orderData == NULL)
     {
         printf("Error opening file\n");
@@ -496,7 +472,6 @@ int main()
         readProduct(&products, &productCount);
         readOrder(&orders, &orderCount);
         readUser(&users, &userCount);
-        readCart(&carts, &cartCount);
         printf("Choose your option: \n");
         scanf("%d", &option);
         switch (option)
@@ -513,47 +488,52 @@ int main()
             displayProduct(products, productCount);
             MenuSales();
             // lua chon mat hang mong muon
-            int n = 0;
+            int n;
+            printf("Choose your product: \n");
+            scanf("%d", &n);
             switch (n)
             {
             case 0:
             {
                 // chuyen ve giao dien chinh
                 printf("Move to Menu\n");
-
                 break;
             }
             case 1:
             {
                 // func: lua chon mat hang
-                addCart(&carts, &cartCount);
-                addtoCart(&carts, &cartCount);
-                removeFromCart(&carts, &cartCount);
-                deleteCart(&orders, &orderCount);
+                addCart(&carts, &cartCount, "product_id", "product_name", 100.0, 200.0, 300.0, 1);
+                addtoCart(carts, cartCount, 1, 400.0);
+                removeFromCart(carts, cartCount, 1, 500.0);
+                break;
             }
-            break;
             default:
             {
                 printf("Invalid option!\n");
+                break;
             }
             }
+            break;
         }
         case 2:
         { // Cart : check bills
             CheckCart();
-            int opt = 0;
+            int opt;
+            printf("Choose your option: \n");
+            scanf("%d", &opt);
             switch (opt)
             {
             case 0:
             { // thoat ve menu
-
+                printf("Move to Menu\n");
+                MenuSales();
                 break;
             }
             case 1:
             { // lua chon gio hang
-                addOrder(&orders, &orderCount);
-                updateOrder(&orders, &orderCount);
-                deleteOrder(&orders, &orderCount);
+                addOrder(&orders, &orderCount, "product_id", "product_name", 600.0, 700.0, "payment", "status", 1, 1);
+                updateOrder(orders, orderCount, 1, "new_status");
+                deleteOrder(&orders, &orderCount, 1);
                 break;
             }
             default:
@@ -566,33 +546,46 @@ int main()
         }
         case 3:
         {
-            int cdm = 0;
+            int cdm;
+            printf("Choose your option: \n");
+            scanf("%d", &cdm);
             switch (cdm)
             {
             case 1:
                 // check don mua
-                checkCart();
+                checkCart(carts, cartCount, 1);
+                break;
             case 2:
                 // func: check don mua
-                checkOrder();
+                checkOrder(orders, orderCount, 1);
+                break;
+            case 3:
+                printf("Confirm order ");
+                enterUserInfo(users);
+                ExportOrder(orders, orderCount);
+                break;
+            case 4:
+                printf("Your Order :");
+                displayOrder(orders, orderCount);
+                displayUser(users, orders, userCount);
+            default:
+            {
+                printf("Invalid option!\n");
                 break;
             }
+            }
+            break;
+        }
         default:
         {
             printf("Invalid option!\n");
             break;
         }
         }
-        case 4:
-            printf("Confirm order :");
-            displayOrder(orders, orderCount);
-            displayUser(users, orders, userCount);
-        }
-        while (option != 0)
-            ;
-        free(products);
-        free(carts);
-        free(orders);
-        free(users);
-    }
+    } while (option != 0);
+    free(products);
+    free(carts);
+    free(orders);
+    free(users);
+    return 0;
 }
