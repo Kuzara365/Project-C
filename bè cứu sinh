@@ -44,11 +44,6 @@ struct order
     int quantity;
 };
 
-#define MAX_NAME_LENGTH 100
-#define MAX_ADDRESS_LENGTH 200
-#define MAX_PHONE_LENGTH 20
-#define MAX_ITEMS 10
-
 int lastAssignedID = 0;
 
 // import data from product.csv
