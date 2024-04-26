@@ -48,7 +48,7 @@ void MainMenu()
     printf("|=============ONLINE SALES SYSTEM==============|\n");
     printf("|==  0.Exit.                                 ==|\n");
     printf("|==  1.Check goods.                          ==|\n");
-    printf("|==  2.Cart: check your bills.               ==|\n");
+    printf("|==  2.Cart: check your cart.                ==|\n");
     printf("|==  3.Check purchased orders.               ==|\n");
     printf("|==============================================|\n");
 }
@@ -65,17 +65,27 @@ void CheckCart()
 {
     printf("*****************CART*****************\n");
     printf("0.Move to menu.\n");
-    printf("1.Select bills.\n");
+    printf("1.Continute Select New Product.\n");
+    printf("2.Edit your cart.\n");
     printf("**************************************\n");
 }
 
+void MenuOrder()
+{
+    printf("****************ORDER PAGE******************\n");
+    printf("0.Exit.\n");
+    printf("1.Check order.\n");
+    printf("2.Confirm order.\n");
+    printf("3.Check your order.\n");
+    printf("********************************************\n");
+}
 
 // import data from product file
 void readProduct(struct product **products, int *productCount)
 {
     char line[1000];
     char *data;
-    FILE *productData = fopen("Data/product.csv", "r");
+    FILE *productData = fopen("E:/Project C/Data/product.csv", "r");
     if (productData == NULL)
     {
         printf("Error opening file\n");
@@ -118,28 +128,6 @@ void displayProduct(struct product *products, int productCount)
     }
 }
 
-// Export user to file
-void ExportUser(struct user *users, int userCount)
-{
-    FILE *userData = fopen("Datalo/user.csv", "a");
-    if (userData == NULL)
-    {
-        printf("Error opening file\n");
-        return;
-    }
-    else
-    {
-        for (int i = 0; i < userCount; i++)
-        {
-            fprintf(userData, "%d, ", users[i].id);
-            fprintf(userData, "%s, ", users[i].name);
-            fprintf(userData, "%s, ", users[i].address);
-            fprintf(userData, "%d, ", users[i].phone_number);
-        }
-        fclose(userData);
-    }
-}
-
 //read user from file
 void readUser(struct user **users, int *userCount)
 {
@@ -174,28 +162,42 @@ void readUser(struct user **users, int *userCount)
     }
 }
 
-// enter user information
+// enter user information and save it to user file
 void enterUserInfo(struct user *users)
 {
-    int id;
-    char name[30];
-    char address[30];
-    int phone_number;
-    printf("Enter your ID: ");
-    scanf("%d", &id);
-    printf("Enter your name: ");
-    scanf("%s", name);
-    printf("Enter your address: ");
-    scanf("%s", address);
-    printf("Enter your phone number: ");
-    scanf("%d", &phone_number);
-    users->id = id;
-    strcpy(users->name, name);
-    strcpy(users->address, address);
-    users->phone_number = phone_number;
-    ExportUser(users, 1);
+    printf("Enter your information\n");
+    printf("User ID: ");
+    scanf("%d", &users->id);
+    printf("Name: ");
+    scanf("%s", users->name);
+    printf("Address: ");
+    scanf("%s", users->address);
+    printf("Phone number: ");
+    scanf("%d", &users->phone_number);
 }
 
+//save user to file
+void exportUser(struct user *users, int userCount)
+{
+    FILE *userData = fopen("E:/Project C/Data/user.csv", "a");
+    if (userData == NULL)
+    {
+        printf("Error opening file\n");
+        return;
+    }
+    else
+    {
+        for (int i = 0; i < userCount; i++)
+        {
+            fprintf(userData, "\n");
+            fprintf(userData, "%d, ", users[i].id);
+            fprintf(userData, "%s, ", users[i].name);
+            fprintf(userData, "%s, ", users[i].address);
+            fprintf(userData, "%d, ", users[i].phone_number);
+        }
+        fclose(userData);
+    }
+}
 // Display user
 void displayUser(struct user *users, struct order *order, int userCount)
 {
@@ -213,32 +215,33 @@ void displayUser(struct user *users, struct order *order, int userCount)
     printf("--------------------------------------\n");
 }
 
-void newCart(struct cart **carts, int *cartCount)
-{
-    (*cartCount)++;
-    *carts = (struct cart *)realloc(*carts, *cartCount * sizeof(struct cart));
-    (*carts)[*cartCount - 1].id = *cartCount;
-}
-
 // Function to add new cart
 void addCart(struct cart **carts, int *cartCount, struct product *products, int productCount, int user_id)
 {
     int id;
+    int quantity;
     printf("Enter product ID: ");
     scanf("%d", &id);
-
+    printf("Enter quantity: ");
+    scanf("%d", &quantity);
     for (int i = 0; i < productCount; i++)
     {
         if (products[i].id == id)
         {
-            newCart(carts, cartCount);
+            if (products[i].remain < quantity)
+            {
+                printf("Not enough product\n");
+                return;
+            }
+            (*cartCount)++;
+            *carts = (struct cart *)realloc(*carts, *cartCount * sizeof(struct cart));
+            (*carts)[*cartCount - 1].id = *cartCount;
             (*carts)[*cartCount - 1].product_id = products[i].id;
             strcpy((*carts)[*cartCount - 1].product_name, products[i].product_name);
+            (*carts)[*cartCount - 1].quantity = quantity;
             (*carts)[*cartCount - 1].price = products[i].price;
-            (*carts)[*cartCount - 1].user_id = user_id;
-            printf("Enter quantity: ");
-            scanf("%d", &(*carts)[*cartCount - 1].quantity);
-            (*carts)[*cartCount - 1].sum = (*carts)[*cartCount - 1].price * (*carts)[*cartCount - 1].quantity;
+            (*carts)[*cartCount - 1].sum = products[i].price * quantity;
+            products[i].remain -= quantity;
             break;
         }
     }
@@ -271,33 +274,54 @@ void checkCart(struct cart *carts, int cartCount)
     printf("====== END CART ======\n");
 }
 
-void deleteCart(struct cart **carts, int *cartCount, int user_id)
+// Function to display cart
+void DisplayCart(struct cart *carts, int cartCount)
 {
-    for (int i = 0; i < *cartCount; i++)
+    printf("=======Cart=======\n");
+    int final_sum = 0;
+    for (int i = 0; i < cartCount; i++)
     {
-        if ((*carts)[i].user_id == user_id)
-        {
-            for (int j = i; j < *cartCount - 1; j++)
-            {
-                (*carts)[j] = (*carts)[j + 1];
-            }
-            *cartCount -= 1;
-            *carts = (struct cart *)realloc(*carts, *cartCount * sizeof(struct cart));
-        }
+        printf("Product ID\t Product Name\t Quantity\tPrice\t Sum\n");
+        printf("%d \t\t", carts[i].product_id);
+        printf("%s \t\t", carts[i].product_name);
+        printf("%d \t", carts[i].quantity);
+        printf("%d \t ", carts[i].price);
+        printf("%d", carts[i].sum);
+        printf("\n");
+        final_sum += carts[i].sum;
     }
+    printf("\t\t\t\tFinal sum: %d\n", final_sum);
 }
 
-void changeQuantity(struct cart **carts, int *cartCount, int id, int new_quantity)
+void changeQuantity(struct cart **carts, int *cartCount, int product_id, int new_quantity)
 {
+    printf("Enter product ID: ");
+    scanf("%d", &product_id);
     printf("Enter new quantity: ");
     scanf("%d", &new_quantity);
-    for (int i = 0; i < *cartCount; i++)
-    {
-        if ((*carts)[i].id == id)
-        {
-            (*carts)[i].quantity = new_quantity;
-            (*carts)[i].sum = (*carts)[i].price * new_quantity;
-            break;
+    if (new_quantity <= 0) {
+        printf("Are you want to remove this product ? (Yes/No): ");
+        char answer[10];
+        scanf("%s", answer);
+        if (strcmp(answer, "Yes") == 0){
+            for (int i = 0; i < *cartCount; i++){
+                if ((*carts)[i].product_id == product_id){
+                    for (int j = i; j < *cartCount - 1; j++){
+                        (*carts)[j] = (*carts)[j + 1];
+                    }
+                    (*cartCount)--;
+                    break;
+                }
+            }
+        }
+        else{
+            for (int i = 0; i < *cartCount; i++){
+                if ((*carts)[i].product_id == product_id){
+                    (*carts)[i].quantity = new_quantity;
+                    (*carts)[i].sum = (*carts)[i].price * new_quantity;
+                    break;
+                }
+            }
         }
     }
 }
@@ -309,19 +333,12 @@ void checkOrder(struct order *orders, int orderCount, int user_id)
     int final_sum = 0;
     for (int i = 0; i < orderCount; i++)
     {
-        if (orders[i].user_id == user_id)
-        {
-            if (final_sum != 0){
-                printf("\t\t\t\tFinal sum: %d\n", final_sum);
-                }
-            printf("--------------------------------------\n");
-            final_sum = 0;
-            printf("ID Order: %d\n", orders[i].id);
-            printf("User ID: %d\n", orders[i].user_id);
-            printf("Payment type: %s\n", orders[i].payment);
-            printf("Status: %s\n", orders[i].status);
-            printf("Product \t Quantity\tPrice\tSum\n");
-        }
+        printf("ID Order: %d\n", orders[i].id);
+        printf("User ID: %d\n", orders[i].user_id);
+        printf("Payment type: %s\n", orders[i].payment);
+        printf("Status: %s\n", orders[i].status);
+        printf("Product \t Quantity\tPrice\tSum\n");
+        
         printf("%s \t\t\t", orders[i].product_name);
         printf("%d \t", orders[i].quantity);
         printf("%d \t", orders[i].price);
@@ -333,23 +350,27 @@ void checkOrder(struct order *orders, int orderCount, int user_id)
     printf("====== END ORDERS ======\n");
 }
 
-// Cart to order
+// convert cart to order
 void CarttoOrder(struct cart *carts, int cartCount, struct order **orders, int *orderCount)
 {
     for (int i = 0; i < cartCount; i++)
     {
         (*orderCount)++;
+        *orders = (struct order *)realloc(*orders, *orderCount * sizeof(struct order));
+        (*orders)[*orderCount - 1].id = *orderCount;
         strcpy((*orders)[*orderCount - 1].product_name, carts[i].product_name);
         (*orders)[*orderCount - 1].quantity = carts[i].quantity;
         (*orders)[*orderCount - 1].price = carts[i].price;
         (*orders)[*orderCount - 1].sum = carts[i].sum;
+        strcpy((*orders)[*orderCount - 1].payment, "COD");
+        strcpy((*orders)[*orderCount - 1].status, "Pending");
         (*orders)[*orderCount - 1].user_id = carts[i].user_id;
     }
 }
 
 void ExportOrder(struct order *orders, int orderCount)
 {
-    FILE *orderData = fopen("Datalo/orders.csv", "a");
+    FILE *orderData = fopen("E:/Project C/Data/orders.csv", "a");
     if (orderData == NULL)
     {
         printf("Error opening file\n");
@@ -376,7 +397,7 @@ void readOrder(struct order **orders, int *orderCount)
 {
     char line[100];
     char *data;
-    FILE *orderData = fopen("Datalo/orders.csv", "r");
+    FILE *orderData = fopen("E:/Project C/Data/order.csv", "r");
     if (orderData == NULL)
     {
         printf("Error opening file\n");
@@ -384,7 +405,7 @@ void readOrder(struct order **orders, int *orderCount)
     }
     else
     {
-        while (fgets(line, 1000, orderData) != NULL)
+        while (fgets(line, 100, orderData) != NULL)
         {
             (*orderCount)++;
             *orders = (struct order *)realloc(*orders, *orderCount * sizeof(struct order));
@@ -400,7 +421,6 @@ void readOrder(struct order **orders, int *orderCount)
 
             data = strtok(NULL, ",");
             (*orders)[*orderCount - 1].price = atoi(data);
-
 
             data = strtok(NULL, ",");
             strcpy((*orders)[*orderCount - 1].payment, data);
@@ -446,7 +466,6 @@ void displayOrder(struct order *orders, int orderCount)
 
 int main()
 {
-    again:
     struct product *products = NULL;
     struct order *orders = NULL;
     struct user *users = NULL;
@@ -454,115 +473,124 @@ int main()
     int userCount = 0, orderCount = 0, productCount = 0, cartCount = 0;
     MainMenu();
     int option = 0;
-    do
-    {
+    do{
         readProduct(&products, &productCount);
-        readOrder(&orders, &orderCount);
-        readUser(&users, &userCount);
-        printf("Choose your option: \n");
+        printf("Choose your option: ");
         scanf("%d", &option);
-        switch (option)
-        {
-        case 0:
-        {
+        switch (option){
+        case 0:{
             printf("You have exited the application!\n");
             break;
         }
-        case 1:
-        {
+        case 1:{
             // func: in san pham
             displayProduct(products, productCount);
             MenuSales();
             // lua chon mat hang mong muon
             int n;
-            printf("Choose your product: \n");
+            printf("Choose your option: ");
             scanf("%d", &n);
-            switch (n)
-            {
-                case 0:
-                {
+            switch (n){
+                case 0:{
                 // chuyen ve giao dien chinh
                 printf("Move to Menu\n");
-                goto again;
+                MenuSales();
                 break;
                 }
-                case 1:
-                {
+                case 1:{
                     // func: lua chon mat hang
                     addCart(&carts, &cartCount, products, productCount, 1);
+                    MainMenu();
                     break;
-                default:
-                {
+                }
+                default:{
                     printf("Invalid option!\n");
                     break;
                 }
             }
             break;
         }
+
         case 2: // Gio hang
         {
-            
             int opt;
-            printf("Choose your option: \n");
+            CheckCart();
+            printf("Choose your option: ");
             scanf("%d", &opt);
             switch (opt)
             {
-                case 0:
-                { // thoat ve menu
+                case 0:{ // thoat ve menu
                     printf("Move to Menu\n");
-                    goto again;
+                    MainMenu();
                     break;
                 }
-                case 1:
-                { // Lua chon san pham
+                case 1:{ // Lua chon san pham
                     addCart(&carts, &cartCount, products, productCount, 1);
+                    MainMenu();
                     break;
                 }
-                default:
-                {
+                case 2:{ // Sua gio hang
+                    DisplayCart(carts, cartCount);
+                    changeQuantity(&carts, &cartCount, 1, 1);
+                    MainMenu();
+                    break;
+                }
+                default:{
                     printf("Invalid option!\n");
                     break;
                 }
             }
             break;
         }
-        case 3:
-        {
+
+        case 3:{
             int cdm;
-            printf("Choose your option: \n");
+            order:
+            MenuOrder();
+            printf("Choose your option: ");
             scanf("%d", &cdm);
-            switch (cdm)
-            {
-                case 1:
-                    // func: check don mua
-                    checkOrder(orders, orderCount, 1);
+            switch (cdm){
+                case 0:
+                    printf("Move to Menu\n");
+                    MainMenu();
                     break;
-                case 3:
-                    printf("Confirm order ");
+                case 1:
+                    CarttoOrder(carts, cartCount, &orders, &orderCount);
+                    checkOrder(orders, orderCount, 1);
+                    goto order;
+                case 2:
+                    printf("Confirm order\n");
                     enterUserInfo(users);
+                    exportUser(users, userCount);
                     ExportOrder(orders, orderCount);
                     break;
-                case 4:
+                case 3:
                     printf("Your Order :");
+                    readOrder(&orders, &orderCount);
+                    readUser(&users, &userCount);
                     displayOrder(orders, orderCount);
                     displayUser(users, orders, userCount);
                 default:
                 printf("Invalid option!\n");
                 break;
             }
+            break;
         }
-        break;
+        default:{
+            printf("Invalid option!\n");
+            break;
         }
-        default:
         {
             printf("Invalid option!\n");
             break;
         }
         }
     } while (option != 0);
+
     free(products);
-    free(carts);
     free(orders);
     free(users);
+    free(carts);
+
     return 0;
 }
