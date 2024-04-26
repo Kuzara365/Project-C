@@ -2,6 +2,25 @@
 #include <string.h>
 #include <stdlib.h>
 
+struct product
+{
+    int id;
+    char product_name[30];
+    int remain;
+    float price;
+};
+
+struct cart
+{
+    int id;
+    char product_id[30];
+    char product_name[30];
+    float price;
+    float sum;
+    char coupon[30];
+    float final_sum;
+    int user_id;
+};
 
 // Function to update cart
 void updateCart(struct cart *carts, int cartCount, int id, float new_final_sum)

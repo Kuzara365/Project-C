@@ -66,26 +66,7 @@ int lastAssignedID = 0;
 
 int main()
 {
-	struct Product products[NUM_PRODUCTS] = {
-        {001, "oreon", 100, 15000},
-        {002, "nabati", 100, 30000},
-        {003, "coca", 100, 10000},
-        {004, "pepsi", 100, 10000},
-        {005, "chocoPie", 100, 30000},
-        {006, "custas", 100, 32000},
-        {007, "Alpenliepe", 100, 12000},
-        {011, "7up", 100, 7000},
-        {012, "mirinda", 100, 8000},
-        {013, "Nestle", 100, 50000},
-        {014, "Milka", 100, 13000},
-        {015, "Kitkat", 100, 20000},
-        {016, "Danisa", 100, 50000},
-        {017, "Lu", 100, 35000},
-        {020, "solie", 100, 25000},
-        {021, "Roca", 100, 30000},
-        {022, "starburst", 100, 24000},
-        {023, "Nerds", 100, 12000}
-    };
+	
 	void readProduct(struct product *Arrproduct, int *number);
 	MainMenu();
     int option=0;
