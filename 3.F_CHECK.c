@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 struct user
 {
 	int id;
@@ -17,7 +16,7 @@ struct order
 	char product_name[30];
     int quantity;
 	int price;
-	int final_sum;
+	int sum;
 	char payment[100];
 	char status[30];
 	int user_id;
@@ -49,7 +48,7 @@ void readUser(struct user **users, int *userCount)
 {
     char line[100];
     char *data;
-    FILE *userData = fopen("user.csv", "r");
+    FILE *userData = fopen("E:/Project C/Data/user.csv", "r");
     if (userData == NULL)
     {
         printf("Error opening file\n");
@@ -61,34 +60,38 @@ void readUser(struct user **users, int *userCount)
         {
             (*userCount)++;
             *users = (struct user *)realloc(*users, *userCount * sizeof(struct user));
+
             data = strtok(line, ",");
             (*users)[*userCount - 1].id = atoi(data);
+
             data = strtok(NULL, ",");
             strcpy((*users)[*userCount - 1].name, data);
+
             data = strtok(NULL, ",");
             strcpy((*users)[*userCount - 1].address, data);
+
             data = strtok(NULL, ",");
             (*users)[*userCount - 1].phone_number = atoi(data);
         }
         fclose(userData);
     }
 }
-//Display user compared to userID in Order
+
+//Display user
 void displayUser(struct user *users, struct order *order, int userCount)
 {
     for (int i = 1; i < userCount; i++)
     {
-        for (int j = 1; j < userCount; j++)
+        if (users[i - 1].id == order[i - 1].user_id)
         {
-            if (users[i].id == order[j].user_id)
-            {
-                printf("Name: %s\n", users[i].name);
-                printf("Address: %s\n", users[i].address);
-                printf("Phone number: %d\n", users[i].phone_number);
-                printf("--------------------------------------\n");
-            }
+            printf("User ID: %d", users[i].id);
+            printf("\nName: %s\n", users[i].name);
+            printf("Address: %s\n", users[i].address);
+            printf("Phone number: %d\n", users[i].phone_number);
+            printf("\n");
         }
     }
+    printf("--------------------------------------\n");
 }
 
 
@@ -108,7 +111,7 @@ void ExportOrder(struct order *orders, int orderCount)
             fprintf(orderData, "%s, ", orders[i].product_name);
             fprintf(orderData, "%d, ", orders[i].quantity);
             fprintf(orderData, "%d, ", orders[i].price);
-            fprintf(orderData, "%d, ", orders[i].final_sum);
+            fprintf(orderData, "%d, ", orders[i].sum);
             fprintf(orderData, "%s, ", orders[i].payment);
             fprintf(orderData, "%s, ", orders[i].status);
             fprintf(orderData, "%d, ", orders[i].user_id);
@@ -133,55 +136,75 @@ void readOrder(struct order **orders, int *orderCount)
         {
             (*orderCount)++;
             *orders = (struct order *)realloc(*orders, *orderCount * sizeof(struct order));
+            
             data = strtok(line, ",");
             (*orders)[*orderCount - 1].id = atoi(data);
+            
             data = strtok(NULL, ",");
             strcpy((*orders)[*orderCount - 1].product_name, data);
+            
             data = strtok(NULL, ",");
             (*orders)[*orderCount - 1].quantity = atoi(data);
+            
             data = strtok(NULL, ",");
             (*orders)[*orderCount - 1].price = atoi(data);
+            
             data = strtok(NULL, ",");
-            (*orders)[*orderCount - 1].final_sum = atoi(data);
+            (*orders)[*orderCount - 1].sum = atoi(data);
+            
             data = strtok(NULL, ",");
             strcpy((*orders)[*orderCount - 1].payment, data);
+            
             data = strtok(NULL, ",");
             strcpy((*orders)[*orderCount - 1].status, data);
+            
             data = strtok(NULL, ",");
             (*orders)[*orderCount - 1].user_id = atoi(data);
         }
         fclose(orderData);
     }
 }
+
 void displayOrder(struct order *orders, int orderCount)
 {
-    printf("List of order \n");
+    int final_sum = 0;
     for (int i = 1; i < orderCount; i++)
     {
-        printf("ID Order: %d \n", orders[i].id);
-        printf("Product: %s   ", orders[i].product_name);
-        printf("Quantity %d   ", orders[i].quantity);
-        printf("Price %d   ", orders[i].price);
-        printf("Sum %d\n", orders[i].final_sum);
-        printf("Payment type: %s\n", orders[i].payment);
-        printf("Status: %s\n", orders[i].status);
-        printf("User ID: %d\n", orders[i].user_id);
+        if (orders[i].id != orders[i - 1].id)
+        {
+            
+            if (final_sum != 0){
+                printf("\t\t\t\tFinal sum: %d\n", final_sum);
+                }
+            printf("--------------------------------------\n");
+            final_sum = 0;
+            printf("ID Order: %d\n", orders[i].id);
+            printf("User ID: %d\n", orders[i].user_id);
+            printf("Payment type: %s\n", orders[i].payment);
+            printf("Status: %s\n", orders[i].status);
+            printf("Product \t Quantity\tPrice\tSum\n");
+        }
+        printf("%s \t\t\t", orders[i].product_name);
+        printf("%d \t", orders[i].quantity);
+        printf("%d \t", orders[i].price);
+        printf("%d \t", orders[i].sum);
+        printf("\n");
+        final_sum += orders[i].sum;
     }
-}
-
+    printf("\t\t\t\tFinal sum: %d\n", final_sum);
+}  
 
 void f_check(){
+    struct user *users = NULL;
+    struct order *orders = NULL;
+    int userCount = 0;
+    int orderCount = 0;
     printf("Customer's information:\n");
-    ExportUser( user *users,  *userCount);
-    readUser( user **users,  *userCount);
-    displayUser( user *users,  order **order,  userCount);
-    
-
-    int orderCount;
+    ExportUser(users,  userCount);
+    readUser(&users, &userCount);
+    displayUser(users, orders, userCount);
 
     printf("Bill:\n");
-    ExportOrder(struct order *orders,  orderCount);
-    readOrder(struct order **orders, int *orderCount);
-    displayOrder(struct order *orders, int orderCount);
-
+    readOrder(&orders, &orderCount);
+    displayOrder(orders, orderCount);
 };
