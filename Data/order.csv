@@ -1,0 +1,7 @@
+ID, Product, Quantity, Price, Sum, Payment, Status, User_ID
+1, Candy, 2, 20, 40, Credit, Paid, 23
+1, Soda, 3, 10, 30, Credit, Paid, 23
+2, Bread, 1, 15, 15, Cash, Paid, 23
+2, Milk, 2, 10, 20, Cash, Paid, 23
+3, Candy, 2, 20, 40, Credit, Paid, 12
+3, Pepsi, 3, 10, 30, Credit, Paid, 12

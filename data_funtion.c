@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-int main(void);
 struct product
 {
 	int id;
@@ -36,7 +35,7 @@ struct order
 	char product_name[30];
     int quantity;
 	int price;
-	int final_sum;
+	int sum;
 	char payment[100];
 	char status[30];
 	int user_id;
@@ -51,7 +50,7 @@ struct order
 void readProduct(struct product **products, int *productCount) {
     char line[1000];
     char *data;
-    FILE * productData = fopen("product.csv", "r");
+    FILE * productData = fopen("E:/Project C/Data/product.csv", "r");
     if (productData == NULL) {
         printf("Error opening file\n");
         return;
@@ -79,7 +78,7 @@ void readProduct(struct product **products, int *productCount) {
 
 //Display product
 void displayProduct(struct product *products, int productCount) {
-    printf("List of product \n");
+    printf("Data/List of product \n");
     for (int i = 1; i < productCount; i++) {
         printf("ID: %d\n", products[i].id);
         printf("%s\n", products[i].product_name);
@@ -92,7 +91,7 @@ void displayProduct(struct product *products, int productCount) {
 //Export user to file
 void ExportUser(struct user *users, int userCount)
 {
-    FILE *userData = fopen("user.csv", "a");
+    FILE *userData = fopen("E:/Project C/Data/user.csv", "a");
     if (userData == NULL)
     {
         printf("Error opening file\n");
@@ -116,7 +115,7 @@ void readUser(struct user **users, int *userCount)
 {
     char line[100];
     char *data;
-    FILE *userData = fopen("user.csv", "r");
+    FILE *userData = fopen("E:/Project C/Data/user.csv", "r");
     if (userData == NULL)
     {
         printf("Error opening file\n");
@@ -150,22 +149,21 @@ void displayUser(struct user *users, struct order *order, int userCount)
 {
     for (int i = 1; i < userCount; i++)
     {
-        for (int j = 1; j < userCount; j++)
+        if (users[i - 1].id == order[i - 1].user_id)
         {
-            if (users[i].id == order[j].user_id)
-            {
-                printf("Name: %s\n", users[i].name);
-                printf("Address: %s\n", users[i].address);
-                printf("Phone number: %d\n", users[i].phone_number);
-                printf("--------------------------------------\n");
-            }
+            printf("User ID: %d", users[i].id);
+            printf("\nName: %s\n", users[i].name);
+            printf("Address: %s\n", users[i].address);
+            printf("Phone number: %d\n", users[i].phone_number);
+            printf("\n");
         }
     }
+    printf("--------------------------------------\n");
 }
 
 void ExportOrder(struct order *orders, int orderCount)
 {
-    FILE *orderData = fopen("order.csv", "a");
+    FILE *orderData = fopen("E:/Project C/Data/order.csv", "a");
     if (orderData == NULL)
     {
         printf("Error opening file\n");
@@ -179,7 +177,7 @@ void ExportOrder(struct order *orders, int orderCount)
             fprintf(orderData, "%s, ", orders[i].product_name);
             fprintf(orderData, "%d, ", orders[i].quantity);
             fprintf(orderData, "%d, ", orders[i].price);
-            fprintf(orderData, "%d, ", orders[i].final_sum);
+            fprintf(orderData, "%d, ", orders[i].sum);
             fprintf(orderData, "%s, ", orders[i].payment);
             fprintf(orderData, "%s, ", orders[i].status);
             fprintf(orderData, "%d, ", orders[i].user_id);
@@ -193,7 +191,7 @@ void readOrder(struct order **orders, int *orderCount)
 {
     char line[100];
     char *data;
-    FILE *orderData = fopen("order.csv", "r");
+    FILE *orderData = fopen("E:/Project C/Data/order.csv", "r");
     if (orderData == NULL)
     {
         printf("Error opening file\n");
@@ -219,7 +217,7 @@ void readOrder(struct order **orders, int *orderCount)
             (*orders)[*orderCount - 1].price = atoi(data);
 
             data = strtok(NULL, ",");
-            (*orders)[*orderCount - 1].final_sum = atoi(data);
+            (*orders)[*orderCount - 1].sum = atoi(data);
 
             data = strtok(NULL, ",");
             strcpy((*orders)[*orderCount - 1].payment, data);
@@ -236,19 +234,31 @@ void readOrder(struct order **orders, int *orderCount)
 
 void displayOrder(struct order *orders, int orderCount)
 {
-    printf("List of order \n");
+    int final_sum = 0;
     for (int i = 1; i < orderCount; i++)
     {
-        printf("ID Order: %d \n", orders[i].id);
-        printf("Product: %s   ", orders[i].product_name);
-        printf("Quantity %d   ", orders[i].quantity);
-        printf("Price %d   ", orders[i].price);
-        printf("Sum %d\n", orders[i].final_sum);
-        printf("Payment type: %s\n", orders[i].payment);
-        printf("Status: %s\n", orders[i].status);
-        printf("User ID: %d\n", orders[i].user_id);
+        if (orders[i].id != orders[i - 1].id)
+        {
+            
+            if (final_sum != 0){
+                printf("\t\t\t\tFinal sum: %d\n", final_sum);
+                }
+            printf("--------------------------------------\n");
+            final_sum = 0;
+            printf("ID Order: %d\n", orders[i].id);
+            printf("User ID: %d\n", orders[i].user_id);
+            printf("Payment type: %s\n", orders[i].payment);
+            printf("Status: %s\n", orders[i].status);
+            printf("Product \t Quantity\tPrice\tSum\n");
+        }
+        printf("%s \t\t\t", orders[i].product_name);
+        printf("%d \t", orders[i].quantity);
+        printf("%d \t", orders[i].price);
+        printf("%d \t", orders[i].sum);
+        printf("\n");
+        final_sum += orders[i].sum;
     }
-
+    printf("\t\t\t\tFinal sum: %d\n", final_sum);
 }
 
 int main() {
@@ -285,5 +295,10 @@ int main() {
             break;
         }
     } while (choice != 0);
+
+    free(products);
+    free(users);
+    free(orders);
+
     return 0;
 }
