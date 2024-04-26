@@ -51,7 +51,7 @@ struct order
 void readProduct(struct product **products, int *productCount) {
     char line[1000];
     char *data;
-    FILE * productData = fopen("E:/Project C/product.csv", "r");
+    FILE * productData = fopen("product.csv", "r");
     if (productData == NULL) {
         printf("Error opening file\n");
         return;
@@ -92,7 +92,7 @@ void displayProduct(struct product *products, int productCount) {
 //Export user to file
 void ExportUser(struct user *users, int userCount)
 {
-    FILE *userData = fopen("E:/Project C/user.csv", "a");
+    FILE *userData = fopen("user.csv", "a");
     if (userData == NULL)
     {
         printf("Error opening file\n");
@@ -116,7 +116,7 @@ void readUser(struct user **users, int *userCount)
 {
     char line[100];
     char *data;
-    FILE *userData = fopen("E:/Project C/user.csv", "r");
+    FILE *userData = fopen("user.csv", "r");
     if (userData == NULL)
     {
         printf("Error opening file\n");
@@ -165,7 +165,7 @@ void displayUser(struct user *users, struct order *order, int userCount)
 
 void ExportOrder(struct order *orders, int orderCount)
 {
-    FILE *orderData = fopen("E:/Project C/order.csv", "a");
+    FILE *orderData = fopen("order.csv", "a");
     if (orderData == NULL)
     {
         printf("Error opening file\n");
@@ -193,7 +193,7 @@ void readOrder(struct order **orders, int *orderCount)
 {
     char line[100];
     char *data;
-    FILE *orderData = fopen("E:/Project C/order.csv", "r");
+    FILE *orderData = fopen("order.csv", "r");
     if (orderData == NULL)
     {
         printf("Error opening file\n");
