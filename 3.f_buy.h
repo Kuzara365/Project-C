@@ -5,6 +5,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+struct product
+{
+	int id;
+	char product_name[30];
+	int remain;
+	int price;
+};
+
+
+struct cart
+{
+	int id;
+	char product_id[30];
+	char product_name[30];
+	int price;
+	int sum;
+	int final_sum;
+	int user_id;
+};
+
 void f_buy();
 void readProduct(struct product **products, int *productCount);
 void displayProduct(struct product *products, int productCount);
@@ -12,28 +32,3 @@ void displayProduct(struct product *products, int productCount);
 
 #endif
 
-/*
-typedef struct {
-    char diemden[50];
-    char diemdi[50];
-    char thoigiankhoihanh[20];
-    char thoigianhacanh[20];
-    char hanghangkhong[30];
-    int thoigianbay;
-    char trangthai[30];
-} Flight;
-
-int calculateTravelTime(char departurePoint[], char destination[]);
-
-void addFlight(Flight flights[], int *currentFlightID);
-
-void changeFlight(Flight flights[]);
-
-void deleteFlight(Flight flights[], int *currentFlightID);
-
-void showflights(Flight flights[], int index);
-
-void MenuFlights(Flight flights[], int *currentFlightID);
-
-#endif
-*/

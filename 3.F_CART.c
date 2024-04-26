@@ -99,6 +99,19 @@ void deleteCart(struct cart **carts, int *cartCount, int id)
     }
 }
 
+void enterUserInfo(struct user *user) {
+    printf("Enter your Id: ");
+    scanf("%d", &user->id);
+
+    printf("Your name: ");
+    scanf("%s", user->name);
+
+    printf("Your address: ");
+    scanf("%s", user->address);
+
+    printf("Phone number: ");
+    scanf("%s", user->phone_number);
+}
 
 void CheckCart()
 {
@@ -140,6 +153,9 @@ void f_cart(){
                         case 2:{ // func : xoa don hang
                             deleteCart(struct cart **carts, int *cartCount, int id);
                             break;
+                        }
+                        case 3:{ // func : xac nhan mua hang 
+                            void enterUserInfo(struct user *user);
                         }
                     }
                 }while( n != 0);

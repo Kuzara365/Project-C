@@ -2,10 +2,19 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "f_buy.h" //mua hang 
-#include "f_cart.h" //gio hang (danh sach bill)
-#include "f_check.h" // kiem tra don da mua 
+#include "3.f_buy.h" //mua hang 
+#include "3.f_cart.h" //gio hang (danh sach bill)
+#include "3.f_check.h" // kiem tra don da mua 
 
+void MainMenu()
+{
+	printf("|=============ONLINE SALES SYSTEM==============|\n");
+	printf("|==  0.Exit.                                 ==|\n");
+    printf("|==  1.Check goods.                          ==|\n");
+	printf("|==  2.Cart: check your bills.               ==|\n");
+	printf("|==  3.Check purchased orders.               ==|\n");
+	printf("|==============================================|\n");
+} 
 
 int main()
 {
@@ -41,5 +50,5 @@ int main()
             }		
     	}
 	}while (option != 0);
-	return 0;
+	return 0; 
 }
