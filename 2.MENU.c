@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 void MainMenu()
 {
 	printf("|=============ONLINE SALES SYSTEM==============|\n");
