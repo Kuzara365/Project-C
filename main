@@ -316,7 +316,7 @@ void checkOrder(struct order *orders, int orderCount, int user_id)
     printf("ID Order: %d\n", orders[1].id = 1);
     for (int i = 0; i < orderCount; i++)
     {
-        printf("Product \t Quantity\tPrice\tSum\n");
+        printf("Product \tQuantity\tPrice\tSum\n");
         
         printf("%s \t\t", orders[i].product_name);
         printf("%d \t", orders[i].quantity);
@@ -349,29 +349,26 @@ void CarttoOrder(struct cart *carts, int cartCount, struct order **orders, int *
 // payment method
 void paymentMethod(struct order *orders, int orderCount)
 {
-    printf("Enter your payment type (no spaces): ");
-    char payment[30];
-    scanf("%29s", payment);
-    while ((getchar()) != '\n');
-
+    printf("Enter your payment type: (Cash, Credit card,Momo / 0,1,2):");
+    int payment;
+    scanf("%d", &payment);
     for (int i = 0; i < orderCount; i++)
     {
-        strncpy(orders[i].payment, payment, sizeof(orders[i].payment) - 1);
-        orders[i].payment[sizeof(orders[i].payment) - 1] = '\0';
-        strcpy(orders[i].status, "Paid");
-    }
-}
-
-//confirm order
-void confirmOrder(struct order *orders, int orderCount)
-{
-    printf("Enter your payment type:");
-    char payment[30];
-    scanf("%s", payment);
-    for (int i = 0; i < orderCount; i++)
-    {
-        strcpy(orders[i].payment, payment);
-        strcpy(orders[i].status, "Paid");
+        if (payment == 0)
+        {
+            strcpy(orders[i].payment, "Cash");
+            strcpy(orders[i].status, "Paid");
+        }
+        else if (payment == 1)
+        {
+            strcpy(orders[i].payment, "Credit card");
+            strcpy(orders[i].status, "Paid");
+        }
+        else if (payment == 2)
+        {
+            strcpy(orders[i].payment, "Momo");
+            strcpy(orders[i].status, "Paid");
+        }
     }
 }
 
@@ -546,12 +543,12 @@ int main()
                     break;
                 }
                 case 1:{ // Lua chon san pham
+                    displayProduct(products, productCount);
                     addCart(&carts, &cartCount, products, productCount, 1);
                     MainMenu();
                     break;
                 }
                 case 2:{ // Sua gio hang
-                    DisplayCart(carts, cartCount);
                     changeQuantity(&carts, &cartCount);
                     MainMenu();
                     break;
@@ -585,7 +582,7 @@ int main()
                     exportUser(users, userCount);
                     CarttoOrder(carts, cartCount, &orders, &orderCount);
                     transferUserID(orders, orderCount, 1);
-                    confirmOrder(orders, orderCount);
+                    paymentMethod(orders, orderCount);
                     ExportOrder(orders, orderCount);
                     while ((getchar()) != '\n');
                     break;
