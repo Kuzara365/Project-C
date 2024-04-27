@@ -1,3 +1,3 @@
 ID, Product, Quantity, Price, Sum, Payment, Status, User_ID
-12, Milka, 2, 13000, 26000, COD, Pending, 12
-1, mirinda, 4, 8000, 32000, COD, Pending, -1163005939
+1,  Kitkat, 6, 20000, Huu, Paid, 1
+1,  Kitkat, 6, 20000, Huu, Paid, 1
