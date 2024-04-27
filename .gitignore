@@ -2,4 +2,6 @@
 *.exe
 *.drawio
 test.c
+test2.c
 Datafuntion.c
+Datafuntionold.c

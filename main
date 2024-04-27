@@ -163,17 +163,22 @@ void readUser(struct user **users, int *userCount)
 }
 
 // enter user information and save it to user file
-void enterUserInfo(struct user *users)
+void enterUserInfo(struct user **users, int *userCount)
 {
-    printf("Enter your information\n");
-    printf("User ID: ");
-    scanf("%d", &users->id);
-    printf("Name: ");
-    scanf("%s", users->name);
-    printf("Address: ");
-    scanf("%s", users->address);
-    printf("Phone number: ");
-    scanf("%d", &users->phone_number);
+    *users = (struct user *)realloc(*users, (*userCount + 1) * sizeof(struct user));
+    if (*users == NULL) {
+        printf("Failed to allocate memory\n");
+        return;
+    }
+    printf("Enter user ID: ");
+    scanf(" %d", &(*users)[*userCount].id);
+    printf("Enter user name: ");
+    scanf(" %s", (*users)[*userCount].name);
+    printf("Enter user phone number: ");
+    scanf(" %d", &(*users)[*userCount].phone_number);
+    printf("Enter user address: ");
+    scanf(" %s", (*users)[*userCount].address);
+    (*userCount)++;
 }
 
 //save user to file
@@ -193,7 +198,7 @@ void exportUser(struct user *users, int userCount)
             fprintf(userData, "%d, ", users[i].id);
             fprintf(userData, "%s, ", users[i].name);
             fprintf(userData, "%s, ", users[i].address);
-            fprintf(userData, "%d, ", users[i].phone_number);
+            fprintf(userData, "%d", users[i].phone_number);
         }
         fclose(userData);
     }
@@ -252,17 +257,10 @@ void checkCart(struct cart *carts, int cartCount)
 {
     int final_sum = 0;
     printf("\n====== CART ======\n");
+    printf("Cart ID: %d\n", carts[1].id);
     for (int i = 0; i < cartCount; i++)
     {
-        if (carts[i].user_id != carts[i - 1].user_id)
-        {
-            if (final_sum != 0){
-                printf("\t\t\t\tFinal sum: %d\n\n", final_sum);
-                }
-            printf("Cart ID: %d\n", carts[i].id);
-            printf("User ID: %d\n", carts[i].user_id);
-            printf("Product \t Quantity\tPrice\tSum\n");
-        }
+        printf("Product \t Quantity\tPrice\tSum\n");
         printf("%d \t\t\t", carts[i].product_id);
         printf("%s \t", carts[i].product_name);
         printf("%d \t", carts[i].quantity);
@@ -364,13 +362,37 @@ void CarttoOrder(struct cart *carts, int cartCount, struct order **orders, int *
         (*orders)[*orderCount - 1].sum = carts[i].sum;
         strcpy((*orders)[*orderCount - 1].payment, "COD");
         strcpy((*orders)[*orderCount - 1].status, "Pending");
-        (*orders)[*orderCount - 1].user_id = carts[i].user_id;
+    }
+}
+
+//confirm order
+void confirmOrder(struct order *orders, int orderCount, int user_id)
+{
+    printf("Enter your payment type:");
+    char payment[30];
+    scanf("%s", payment);
+    for (int i = 0; i < orderCount; i++)
+    {
+        if (orders[i].user_id == user_id)
+        {
+            strcpy(orders[i].payment, payment);
+            strcpy(orders[i].status, "Confirmed");
+        }
+    }
+}
+
+// transfer userID to order
+void transferUserID(struct order *orders, int orderCount, int user_id)
+{
+    for (int i = 0; i < orderCount; i++)
+    {
+        orders[i].user_id = user_id;
     }
 }
 
 void ExportOrder(struct order *orders, int orderCount)
 {
-    FILE *orderData = fopen("E:/Project C/Data/orders.csv", "a");
+    FILE *orderData = fopen("E:/Project C/Data/order.csv", "a");
     if (orderData == NULL)
     {
         printf("Error opening file\n");
@@ -380,13 +402,14 @@ void ExportOrder(struct order *orders, int orderCount)
     {
         for (int i = 0; i < orderCount; i++)
         {
+            fprintf(orderData, "\n");
             fprintf(orderData, "%d, ", orders[i].id);
             fprintf(orderData, "%s, ", orders[i].product_name);
             fprintf(orderData, "%d, ", orders[i].quantity);
             fprintf(orderData, "%d, ", orders[i].price);
             fprintf(orderData, "%s, ", orders[i].payment);
             fprintf(orderData, "%s, ", orders[i].status);
-            fprintf(orderData, "%d, ", orders[i].user_id);
+            fprintf(orderData, "%d", orders[i].user_id);
         }
         fclose(orderData);
     }
@@ -560,9 +583,14 @@ int main()
                     goto order;
                 case 2:
                     printf("Confirm order\n");
-                    enterUserInfo(users);
+                    enterUserInfo(&users, &userCount);
                     exportUser(users, userCount);
+                    CarttoOrder(carts, cartCount, &orders, &orderCount);
+                    transferUserID(orders, orderCount, 1);
+                    confirmOrder(orders, orderCount, 1);
                     ExportOrder(orders, orderCount);
+                    while ((getchar()) != '\n');
+                    MenuOrder();
                     break;
                 case 3:
                     printf("Your Order :");
